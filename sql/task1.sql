@@ -1,0 +1,46 @@
+-- Write your Task 1 answers in this file
+CREATE DATABASE bedandbreakfast;
+
+USE bedandbreakfast;
+
+CREATE TABLE users (
+	email varchar(128) NOT NULL,
+	name varchar(128) NOT NULL,
+	CONSTRAINT pk_email PRIMARY KEY (email)
+);
+
+CREATE TABLE bookings (
+	booking_id char(8) NOT NULL,
+	listing_id varchar(20) NOT NULL,
+	duration int NOT NULL,
+	email varchar(128) NOT NULL,
+	CONSTRAINT pk_booking_id PRIMARY KEY (booking_id),
+	CONSTRAINT fk_email FOREIGN KEY (email) REFERENCES users(email)
+);
+
+CREATE TABLE reviews (
+	id int NOT NULL AUTO_INCREMENT,
+	date datetime NOT NULL,
+	listing_id varchar(20) NOT NULL,
+	reviewer_name varchar(64) NOT NULL,
+	comments text NOT NULL,
+	CONSTRAINT pk_review_id PRIMARY KEY (id)
+);
+
+
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.4/Uploads/users.csv' INTO TABLE users
+  FIELDS TERMINATED BY ',' #ENCLOSED BY '"'
+  LINES TERMINATED BY '\n'
+  IGNORE 1 LINES;
+
+
+SELECT * FROM users;
+
+
+CREATE USER 'fred'@'%'
+identified BY 'qweasd';
+
+GRANT ALL PRIVILEGES ON bedandbreakfast.* 
+TO 'fred'@'%';
+
+flush PRIVILEGES;
