@@ -63,3 +63,66 @@ db.listings.updateMany(
 )
 
 db.listings.findOne()
+
+
+// #######
+// Task 3
+// #######
+db.listings.distinct('address.suburb').length
+
+db.listings.aggregate([
+    // Filter out field where values are ne null and ne ""
+    {
+        $match: {
+            'address.country': {
+				$regex: 'Australia',
+				$options: 'i'
+			},
+            'address.suburb': { $ne: null, $ne: "" }
+        }
+    },
+    {
+        $group: {
+            _id: "$address.suburb"  // Group by 'address.suburb' and set it as _id
+        }
+    },
+    {
+        $sort:  { _id: 1 }
+    }
+    //{ $count: "uniqueSuburb" }    // to check unique suburb count
+])
+
+
+// #######
+// Task 4
+// #######
+db.listings.find({}).sort({
+    price: 1
+})
+db.listings.aggregate([
+    {
+        $match: {
+            'address.suburb': { 
+				$regex: 'Lilyfield',
+				$options: 'i'
+			},
+			accommodates: { $gte: 2 },
+			min_nights: { $lte: 2 },
+			price: { $lte: 1000 }
+			// max_nights: { $gte: 2 },
+            // price: { $gte: 50, $lte: 100 }
+        }
+    },
+    {
+        $project: { 
+            _id: 1, 
+            name: 1, 
+            accommodates: 1, 
+            price: 1
+        } 
+    },
+    {
+        // Sort desc
+        $sort:  { price: -1 }
+    }
+])
