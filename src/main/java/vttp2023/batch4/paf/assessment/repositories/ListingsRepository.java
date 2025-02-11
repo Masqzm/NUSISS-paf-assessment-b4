@@ -2,10 +2,16 @@ package vttp2023.batch4.paf.assessment.repositories;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -27,10 +33,53 @@ public class ListingsRepository {
 	 * inside this comment block
 	 * eg. db.bffs.find({ name: 'fred }) 
 	 *
-	 *
+	 * 
+	 * 	db.listings.aggregate([
+	 * 		{
+				$match: {
+					'address.country': {
+						$regex: 'Australia',
+						$options: 'i'
+					},
+					'address.suburb': { $ne: null, $ne: "" }
+				}
+			},
+			{
+				$group: { _id: "$address.suburb" }
+			},
+			{
+				$sort:  { _id: 1 }
+			}
+		])
 	 */
 	public List<String> getSuburbs(String country) {
-		return null;
+
+        // Match operation (filter by country)
+        Criteria criteriaCountry = Criteria.where("address.country")
+                            	.regex(country, "i");    
+		// Match operation (filter null/empty address.suburb values)
+		Criteria criteriaSuburb = Criteria.where("address.suburb")
+								.ne(null)						
+								.ne("");
+
+
+		Criteria criteria = criteriaCountry.andOperator(criteriaSuburb);
+        
+		MatchOperation filterByCountryValidSuburb = Aggregation.match(criteria);
+
+		GroupOperation groupSuburb = Aggregation.group("address.suburb");
+
+		SortOperation sortSuburbAsc = Aggregation.sort(Sort.Direction.ASC, "_id");
+
+		Aggregation pipeline = Aggregation.newAggregation(filterByCountryValidSuburb, groupSuburb, sortSuburbAsc);
+		
+		List<Document> results = template.aggregate(pipeline, "listings", Document.class).getMappedResults();
+		
+		List<String> suburbs = results.stream()
+							.map(doc -> doc.getString("_id"))
+							.collect(Collectors.toList());
+		
+		return suburbs;
 	}
 
 	/*

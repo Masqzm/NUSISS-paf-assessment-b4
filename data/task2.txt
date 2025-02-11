@@ -1,16 +1,14 @@
 Write your Task 2 answers in this file
 
-mongoimport `
---host=localhost `
---port=27017 `
---db=bedandbreakfast `
---collection=listings_and_reviews `
---type=json `
---file=listings.json `
---drop
+// #########
+// Task 2.1
+// #########
+mongoimport --host=localhost --port=27017 --db=bedandbreakfast --collection=listings_and_reviews --type=json --file=listings.json --drop
 
 
-
+// #########
+// Task 2.2
+// #########
 db.listings_and_reviews.findOne()
 
 db.listings_and_reviews.aggregate([
@@ -32,6 +30,10 @@ db.listings_and_reviews.aggregate([
 db.listings.findOne()
 db.listings.find({}).limit(2)
 
+
+// #########
+// Task 2.3
+// #########
 db.listings.aggregate([
     {
         $unwind: '$reviews'
@@ -46,7 +48,8 @@ db.listings.aggregate([
                 $replaceAll: { 
                     input: { $replaceAll: { input: '$reviews.comments', find: '\n', replacement: '' } }, 
                     find: '\r', 
-                    replacement: '' }
+                    replacement: '' 
+                }
             }
         }
     },
@@ -56,3 +59,28 @@ db.listings.aggregate([
 ])
 
 db.reviews.findOne()
+
+
+// #########
+// Task 2.4
+// #########
+db.listings.updateMany(
+    {},    // filter (e.g. use { address.market: "xxx" } instead if you want to unset certain docs w address.market xxx)
+    { 
+        $unset: { reviews: 1 }    // can unset more than 1 field
+    }
+)
+
+db.listings.findOne()
+
+
+// #########
+// Task 2.5
+// #########
+mongoexport --uri="mongodb://localhost:27017" --db=bedandbreakfast --collection=reviews --type=csv --fields=date,listing_id,reviewer_name,comments --out=reviews.csv
+
+
+// #########
+// Task 2.6
+// #########
+java -jar csv2sql.jar reviews.csv reviews.sql

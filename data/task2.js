@@ -1,3 +1,6 @@
+// #########
+// Task 2.2
+// #########
 db.listings_and_reviews.findOne()
 
 db.listings_and_reviews.aggregate([
@@ -19,6 +22,9 @@ db.listings_and_reviews.aggregate([
 db.listings.findOne()
 db.listings.find({}).limit(2)
 
+// #########
+// Task 2.3
+// #########
 db.listings.aggregate([
     {
         $unwind: '$reviews'
@@ -33,7 +39,8 @@ db.listings.aggregate([
                 $replaceAll: { 
                     input: { $replaceAll: { input: '$reviews.comments', find: '\n', replacement: '' } }, 
                     find: '\r', 
-                    replacement: '' }
+                    replacement: '' 
+                }
             }
         }
     },
@@ -43,3 +50,16 @@ db.listings.aggregate([
 ])
 
 db.reviews.findOne()
+
+
+// #########
+// Task 2.4
+// #########
+db.listings.updateMany(
+    {},    // filter (e.g. use { address.market: "xxx" } instead if you want to unset certain docs w address.market xxx)
+    { 
+        $unset: { reviews: 1 }    // can unset more than 1 field
+    }
+)
+
+db.listings.findOne()

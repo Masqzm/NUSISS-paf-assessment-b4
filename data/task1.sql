@@ -3,6 +3,15 @@ CREATE DATABASE bedandbreakfast;
 
 USE bedandbreakfast;
 
+CREATE USER 'fred'@'%'
+identified BY 'qweasd';
+
+GRANT ALL PRIVILEGES ON bedandbreakfast.* 
+TO 'fred'@'%';
+
+flush PRIVILEGES;
+
+
 CREATE TABLE users (
 	email varchar(128) NOT NULL,
 	name varchar(128) NOT NULL,
@@ -28,19 +37,17 @@ CREATE TABLE reviews (
 );
 
 
-LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.4/Uploads/users.csv' INTO TABLE users
-  FIELDS TERMINATED BY ',' #ENCLOSED BY '"'
-  LINES TERMINATED BY '\n'
-  IGNORE 1 LINES;
+# Find location to upload users.csv so we can place it there to import the data
+SHOW VARIABLES LIKE 'secure_file_priv';
 
+#LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.4/Uploads/users.csv'
+LOAD DATA INFILE 'D:/Work stuff/Tools/MySQL/data/Uploads/users.csv'
+	INTO TABLE users
+  	FIELDS TERMINATED BY ',' #ENCLOSED BY '"'
+  	LINES TERMINATED BY '\n'
+  	IGNORE 1 LINES;
 
 SELECT * FROM users;
 
-
-CREATE USER 'fred'@'%'
-identified BY 'qweasd';
-
-GRANT ALL PRIVILEGES ON bedandbreakfast.* 
-TO 'fred'@'%';
-
-flush PRIVILEGES;
+SELECT * FROM bookings;
+SELECT * FROM reviews;
