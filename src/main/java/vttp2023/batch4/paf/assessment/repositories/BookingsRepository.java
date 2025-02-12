@@ -33,7 +33,7 @@ public class BookingsRepository {
 		return Optional.of(new User(rs.getString("email"), rs.getString("name")));
 	}
 
-	// TODO: Task 6
+	// Task 6
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add throw exceptions to this method
 	public void newUser(User user) throws Exception {
@@ -43,7 +43,7 @@ public class BookingsRepository {
 		//template.update(SQL_INSERT_USER, "fred@gmail.com", user.name());
 	}
 
-	// TODO: Task 6
+	// Task 6
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add throw exceptions to this method
 	public void newBookings(Bookings bookings) throws Exception {

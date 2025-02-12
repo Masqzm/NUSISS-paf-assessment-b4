@@ -6,7 +6,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -16,7 +15,7 @@ import jakarta.json.JsonReader;
 
 @Service
 public class ForexService {
-	// TODO: Task 5 
+	// Task 5 
 	public float convert(String from, String to, float amount) {
 		String url = UriComponentsBuilder.fromUriString("https://api.frankfurter.dev/v1/latest")
 					.queryParam("base", from.toUpperCase())
