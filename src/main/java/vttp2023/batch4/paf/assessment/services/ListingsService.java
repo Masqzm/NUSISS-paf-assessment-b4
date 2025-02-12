@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import vttp2023.batch4.paf.assessment.models.Accommodation;
 import vttp2023.batch4.paf.assessment.models.AccommodationSummary;
 import vttp2023.batch4.paf.assessment.models.Bookings;
+import vttp2023.batch4.paf.assessment.models.User;
+import vttp2023.batch4.paf.assessment.repositories.BookingsRepository;
 import vttp2023.batch4.paf.assessment.repositories.ListingsRepository;
 
 @Service
@@ -18,6 +21,8 @@ public class ListingsService {
 
 	@Autowired
 	private ListingsRepository listingsRepo;
+	@Autowired
+	private BookingsRepository bookingsRepo;
 
 	@Autowired
 	private ForexService forexSvc;
@@ -56,7 +61,12 @@ public class ListingsService {
 	// TODO: Task 6 
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add annotations and throw exceptions to this method
-	public void createBooking(Bookings booking) {
+	public void createBooking(Bookings booking) throws Exception {
+		// Create user if user doesnt exists
+		if(bookingsRepo.userExists(booking.getEmail()).isEmpty())
+			bookingsRepo.newUser(new User(booking.getEmail(), booking.getName()));
+		
+		bookingsRepo.newBookings(booking);
 	}
 
 }

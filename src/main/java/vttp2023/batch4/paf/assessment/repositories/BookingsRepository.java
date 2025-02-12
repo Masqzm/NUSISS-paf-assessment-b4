@@ -15,7 +15,11 @@ public class BookingsRepository {
 	
 	// You may add additional dependency injections
 
-	public static final String SQL_SELECT_USER_BY_EMAIL = "select * from users where email like %";
+	public static final String SQL_SELECT_USER_BY_EMAIL = "select * from users where email = ?";
+	
+	public static final String SQL_INSERT_USER = "INSERT INTO users(email, name) VALUES (?, ?)";
+
+	public static final String SQL_INSERT_BOOKING = "INSERT INTO bookings(booking_id, listing_id, duration, email) VALUES (?, ?, ?, ?)";
 
 	@Autowired
 	private JdbcTemplate template;
@@ -32,12 +36,20 @@ public class BookingsRepository {
 	// TODO: Task 6
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add throw exceptions to this method
-	public void newUser(User user) {
+	public void newUser(User user) throws Exception {
+		template.update(SQL_INSERT_USER, user.email(), user.name());
+		
+		// To force test dupli user error
+		//template.update(SQL_INSERT_USER, "fred@gmail.com", user.name());
 	}
 
 	// TODO: Task 6
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add throw exceptions to this method
-	public void newBookings(Bookings bookings) {
+	public void newBookings(Bookings bookings) throws Exception {
+		template.update(SQL_INSERT_BOOKING, bookings.getBookingId(), bookings.getListingId(), bookings.getDuration(), bookings.getEmail());
+
+		// To force test user doesnt exist error
+		//template.update(SQL_INSERT_BOOKING, bookings.getBookingId(), bookings.getListingId(), bookings.getDuration(), "abcde@g.com");
 	}
 }
